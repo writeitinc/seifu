@@ -16,20 +16,48 @@ typedef struct MaggotDivResult {
 	size_t rem;
 } MaggotDivResult;
 
+static inline bool maggot_add_would_wrap(size_t a, size_t b);
+static inline bool maggot_sub_would_wrap(size_t a, size_t b);
+static inline bool maggot_mult_would_wrap(size_t a, size_t b);
+
 static inline MaggotStatus maggot_add(size_t a, size_t b, size_t *ret_res);
+static inline size_t maggot_add_bounded(size_t a, size_t b);
+
 static inline MaggotStatus maggot_sub(size_t a, size_t b, size_t *ret_res);
+static inline size_t maggot_sub_bounded(size_t a, size_t b);
+
 static inline MaggotStatus maggot_mult(size_t a, size_t b, size_t *ret_res);
+static inline size_t maggot_mult_bounded(size_t a, size_t b);
+
 static inline MaggotStatus maggot_div(size_t a, size_t b,
 		MaggotDivResult *ret_res);
+static inline MaggotDivResult maggot_div_bounded(size_t a, size_t b);
+
 static inline MaggotStatus maggot_div_floor(size_t a, size_t b,
 		size_t *ret_res);
 static inline MaggotStatus maggot_div_ceil(size_t a, size_t b, size_t *ret_res);
 static inline MaggotStatus maggot_div_round(size_t a, size_t b,
 		size_t *ret_res);
 
+static inline bool maggot_add_would_wrap(size_t a, size_t b)
+{
+	return a > SIZE_MAX - b;
+}
+
+static inline bool maggot_sub_would_wrap(size_t a, size_t b)
+{
+	return b > a;
+}
+
+static inline bool maggot_mult_would_wrap(size_t a, size_t b)
+{
+	// TODO implement without division
+	return b != 0 && a > SIZE_MAX / b;
+}
+
 static inline MaggotStatus maggot_add(size_t a, size_t b, size_t *ret_res)
 {
-	if (a > SIZE_MAX - b) {
+	if (maggot_add_would_wrap(a, b)) {
 		return MAGGOT_WRAP;
 	}
 
@@ -37,9 +65,18 @@ static inline MaggotStatus maggot_add(size_t a, size_t b, size_t *ret_res)
 	return MAGGOT_OK;
 }
 
+static inline size_t maggot_add_bounded(size_t a, size_t b)
+{
+	if (maggot_add_would_wrap(a, b)) {
+		return SIZE_MAX;
+	}
+
+	return a + b;
+}
+
 static inline MaggotStatus maggot_sub(size_t a, size_t b, size_t *ret_res)
 {
-	if (b > a) {
+	if (maggot_sub_would_wrap(a, b)) {
 		return MAGGOT_WRAP;
 	}
 
@@ -47,15 +84,32 @@ static inline MaggotStatus maggot_sub(size_t a, size_t b, size_t *ret_res)
 	return MAGGOT_OK;
 }
 
+static inline size_t maggot_sub_bounded(size_t a, size_t b)
+{
+	if (maggot_sub_would_wrap(a, b)) {
+		return 0;
+	}
+
+	return a - b;
+}
+
 static inline MaggotStatus maggot_mult(size_t a, size_t b, size_t *ret_res)
 {
-	// TODO implement without division
-	if (b != 0 && a > SIZE_MAX / b) {
+	if (maggot_mult_would_wrap(a, b)) {
 		return MAGGOT_WRAP;
 	}
 
 	*ret_res = a * b;
 	return MAGGOT_OK;
+}
+
+static inline size_t maggot_mult_bounded(size_t a, size_t b)
+{
+	if (maggot_mult_would_wrap(a, b)) {
+		return SIZE_MAX;
+	}
+
+	return a * b;
 }
 
 static inline MaggotStatus maggot_div(size_t a, size_t b,
@@ -74,6 +128,25 @@ static inline MaggotStatus maggot_div(size_t a, size_t b,
 		.rem = rem
 	};
 	return MAGGOT_OK;
+}
+
+static inline MaggotDivResult maggot_div_bounded(size_t a, size_t b)
+{
+	if (b == 0) {
+		return (MaggotDivResult){
+			.quot = SIZE_MAX,
+			.rem = 0
+		};
+	}
+
+	// TODO check if this gets optimized
+	size_t quot = a / b;
+	size_t rem = a % b;
+
+	return (MaggotDivResult){
+		.quot = quot,
+		.rem = rem
+	};
 }
 
 static inline MaggotStatus maggot_div_floor(size_t a, size_t b, size_t *ret_res)
