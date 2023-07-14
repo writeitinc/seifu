@@ -40,9 +40,14 @@ static inline SeifuDivResult seifu_div_bounded(size_t a, size_t b);
 
 static inline SeifuStatus seifu_div_floor(size_t a, size_t b,
 		size_t *ret_res);
+static inline size_t seifu_div_floor_bounded(size_t a, size_t b);
+
 static inline SeifuStatus seifu_div_ceil(size_t a, size_t b, size_t *ret_res);
+static inline size_t seifu_div_ceil_bounded(size_t a, size_t b);
+
 static inline SeifuStatus seifu_div_round(size_t a, size_t b,
 		size_t *ret_res);
+static inline size_t seifu_div_round_bounded(size_t a, size_t b);
 
 static inline size_t unseifu_div_ceil(size_t a, size_t b);
 static inline size_t unseifu_div_round(size_t a, size_t b);
@@ -167,6 +172,15 @@ static inline SeifuStatus seifu_div_floor(size_t a, size_t b, size_t *ret_res)
 	return SEIFU_OK;
 }
 
+static inline size_t seifu_div_floor_bounded(size_t a, size_t b)
+{
+	if (b == 0) {
+		return SIZE_MAX;
+	}
+
+	return a / b;
+}
+
 static inline SeifuStatus seifu_div_ceil(size_t a, size_t b, size_t *ret_res)
 {
 	if (b == 0) {
@@ -177,6 +191,15 @@ static inline SeifuStatus seifu_div_ceil(size_t a, size_t b, size_t *ret_res)
 	return SEIFU_OK;
 }
 
+static inline size_t seifu_div_ceil_bounded(size_t a, size_t b)
+{
+	if (b == 0) {
+		return SIZE_MAX;
+	}
+
+	return unseifu_div_ceil(a, b);
+}
+
 static inline SeifuStatus seifu_div_round(size_t a, size_t b, size_t *ret_res)
 {
 	if (b == 0) {
@@ -185,6 +208,15 @@ static inline SeifuStatus seifu_div_round(size_t a, size_t b, size_t *ret_res)
 
 	*ret_res = unseifu_div_round(a, b);
 	return SEIFU_OK;
+}
+
+static inline size_t seifu_div_round_bounded(size_t a, size_t b)
+{
+	if (b == 0) {
+		return SIZE_MAX;
+	}
+
+	return unseifu_div_round(a, b);
 }
 
 static inline size_t unseifu_div_ceil(size_t a, size_t b)
