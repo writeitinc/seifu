@@ -64,7 +64,7 @@ static inline bool seifu_sub_would_wrap(size_t a, size_t b)
 
 static inline bool seifu_mult_would_wrap(size_t a, size_t b)
 {
-	// TODO implement without division
+	// this gets optimized by both gcc and clang
 	return b != 0 && a > SIZE_MAX / b;
 }
 
@@ -132,7 +132,6 @@ static inline SeifuStatus seifu_div(size_t a, size_t b,
 		return SEIFU_DIV_BY_ZERO;
 	}
 
-	// TODO check if this gets optimized
 	size_t quot = a / b;
 	size_t rem = a % b;
 
@@ -152,7 +151,6 @@ static inline SeifuDivResult seifu_div_bounded(size_t a, size_t b)
 		};
 	}
 
-	// TODO check if this gets optimized
 	size_t quot = a / b;
 	size_t rem = a % b;
 
