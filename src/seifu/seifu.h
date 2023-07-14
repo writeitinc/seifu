@@ -10,6 +10,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define SEIFU_VERSION_MAJOR 1
+#define SEIFU_VERSION_MINOR 0
+#define SEIFU_VERSION_PATCH 0
+
 typedef enum SeifuStatus {
 	SEIFU_OK = 0,
 	SEIFU_WRAP = -1,
