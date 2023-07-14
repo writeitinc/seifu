@@ -39,6 +39,9 @@ static inline MaggotStatus maggot_div_ceil(size_t a, size_t b, size_t *ret_res);
 static inline MaggotStatus maggot_div_round(size_t a, size_t b,
 		size_t *ret_res);
 
+static inline size_t maggot_div_ceil_unchecked(size_t a, size_t b);
+static inline size_t maggot_div_round_unchecked(size_t a, size_t b);
+
 static inline bool maggot_add_would_wrap(size_t a, size_t b)
 {
 	return a > SIZE_MAX - b;
@@ -155,9 +158,7 @@ static inline MaggotStatus maggot_div_floor(size_t a, size_t b, size_t *ret_res)
 		return MAGGOT_DIV_BY_ZERO;
 	}
 
-	size_t quot_floor = a / b;
-
-	*ret_res = quot_floor;
+	*ret_res = a / b;
 	return MAGGOT_OK;
 }
 
@@ -167,12 +168,7 @@ static inline MaggotStatus maggot_div_ceil(size_t a, size_t b, size_t *ret_res)
 		return MAGGOT_DIV_BY_ZERO;
 	}
 
-	size_t quot = a / b;
-	size_t rem = a % b;
-
-	size_t quot_ceil = quot + (rem > 0);
-
-	*ret_res =  quot_ceil;
+	*ret_res = maggot_div_ceil_unchecked(a, b);
 	return MAGGOT_OK;
 }
 
@@ -182,16 +178,27 @@ static inline MaggotStatus maggot_div_round(size_t a, size_t b, size_t *ret_res)
 		return MAGGOT_DIV_BY_ZERO;
 	}
 
+	*ret_res = maggot_div_round_unchecked(a, b);
+	return MAGGOT_OK;
+}
+
+static inline size_t maggot_div_ceil_unchecked(size_t a, size_t b)
+{
+	size_t quot = a / b;
+	size_t rem = a % b;
+
+	return quot + (rem > 0);
+}
+
+static inline size_t maggot_div_round_unchecked(size_t a, size_t b)
+{
 	size_t quot = a / b;
 	size_t rem = a % b;
 
 	bool b_is_odd = b % 2 == 1;
 	bool round_up = rem >= (b / 2 + b_is_odd);
 
-	size_t quot_rounded = quot + round_up;
-
-	*ret_res = quot_rounded;
-	return MAGGOT_OK;
+	return quot + round_up;
 }
 
 #endif // maggot_h
