@@ -15,7 +15,7 @@ debug: dirs $(BINARIES)
 
 # tests
 
-bin/test: tests/test.c src/maggot/maggot.h
+bin/test: tests/test.c src/seifu/seifu.h
 	$(CC) -o $@ $< $(CFLAGS) $(IFLAGS) $(DEBUG) $(DEFINES)
 
 # dirs

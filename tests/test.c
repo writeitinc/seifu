@@ -1,4 +1,4 @@
-#include <maggot/maggot.h>
+#include <seifu/seifu.h>
 
 int main(void)
 {
