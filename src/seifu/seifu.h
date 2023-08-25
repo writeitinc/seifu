@@ -42,15 +42,13 @@ static inline SeifuStatus seifu_div(size_t a, size_t b,
 		SeifuDivResult *ret_res);
 static inline SeifuDivResult seifu_div_bounded(size_t a, size_t b);
 
-static inline SeifuStatus seifu_div_floor(size_t a, size_t b,
-		size_t *ret_res);
+static inline SeifuStatus seifu_div_floor(size_t a, size_t b, size_t *ret_res);
 static inline size_t seifu_div_floor_bounded(size_t a, size_t b);
 
 static inline SeifuStatus seifu_div_ceil(size_t a, size_t b, size_t *ret_res);
 static inline size_t seifu_div_ceil_bounded(size_t a, size_t b);
 
-static inline SeifuStatus seifu_div_round(size_t a, size_t b,
-		size_t *ret_res);
+static inline SeifuStatus seifu_div_round(size_t a, size_t b, size_t *ret_res);
 static inline size_t seifu_div_round_bounded(size_t a, size_t b);
 
 static inline size_t unseifu_div_ceil(size_t a, size_t b);
@@ -129,8 +127,7 @@ static inline size_t seifu_mult_bounded(size_t a, size_t b)
 	return a * b;
 }
 
-static inline SeifuStatus seifu_div(size_t a, size_t b,
-		SeifuDivResult *ret_res)
+static inline SeifuStatus seifu_div(size_t a, size_t b, SeifuDivResult *ret_res)
 {
 	if (b == 0) {
 		return SEIFU_DIV_BY_ZERO;
